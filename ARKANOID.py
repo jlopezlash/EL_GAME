@@ -1,6 +1,12 @@
 import pygame
 from random import randint
+import ctypes #Esto hasta print(ancho,alto) para tamaño pantalla equipo
 
+
+user32 = ctypes.windll.user32
+user32.SetProcessDPIAware()
+ancho, alto = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+print(ancho, alto) #Hasta aqui lo de la pantalla
 
 pygame.init()
 ventana = pygame.display.set_mode((640,480))
