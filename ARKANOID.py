@@ -3,17 +3,17 @@ from random import randint
 
 
 pygame.init()
-ventana = pygame.display.set_mode((640,480))
-pygame.display.set_caption("Ejemplo 4")
+ventana = pygame.display.set_mode((1440,1080))
+pygame.display.set_caption("ARKANOID")
 
-ball = pygame.image.load("ball.png")
+ball = pygame.image.load("Bakugan.png")
 ballrect = ball.get_rect()
 speed = [randint(3,6),randint(3,6)]
 ballrect.move_ip(0,0)
 
-barra = pygame.image.load("barra.png")
+barra = pygame.image.load("Bakugan.png")
 barrarect = barra.get_rect()
-barrarect.move_ip(240,450)
+barrarect.move_ip(240,540)
 
 fuente = pygame.font.Font(None, 36)
 
