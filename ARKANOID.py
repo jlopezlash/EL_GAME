@@ -9,7 +9,7 @@ ancho, alto = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 print(ancho, alto) #Hasta aqui lo de la pantalla
 
 pygame.init()
-ventana = pygame.display.set_mode((1440,1080))
+ventana = pygame.display.set_mode((ancho,alto))
 pygame.display.set_caption("ARKANOID")
 
 ball = pygame.image.load("Bakugan.png")
