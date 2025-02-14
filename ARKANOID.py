@@ -6,7 +6,7 @@ import ctypes #Esto hasta print(ancho,alto) para tamaño pantalla equipo
 user32 = ctypes.windll.user32
 user32.SetProcessDPIAware()
 ancho, alto = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
-print(ancho, alto) #Hasta aqui lo de la pantalla
+#print(ancho, alto) Hasta aqui lo de la pantalla
 
 pygame.init()
 ventana = pygame.display.set_mode((ancho,alto))
@@ -22,6 +22,26 @@ barrarect = barra.get_rect()
 barrarect.move_ip(240,540)
 
 fuente = pygame.font.Font(None, 36)
+
+class CartaVerde():
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(x, y, 120, 40)  # Rectángulo del bloque
+        self.color = (0, 255, 0)  # Color verde
+    def dibujar(self, ventana):
+        pygame.draw.rect(ventana, self.color, self.rect)
+
+def crear_fila_de_bloques():
+    bloques = []
+    espaciado = 10  # Espacio entre bloques
+    cantidad_bloques = 6  # Número de bloques en la fila
+    for i in range(cantidad_bloques):
+        x = i * (120 + espaciado)  # El 60 es el ancho de cada bloque
+        y = 50  # Fila de bloques en la parte superior
+        bloque = CartaVerde(x, y)
+        bloques.append(bloque)
+    return bloques
+
+bloques = crear_fila_de_bloques()
 
 jugando = True
 while jugando:
@@ -42,6 +62,8 @@ while jugando:
         speed[0] = -speed[0]
     if ballrect.top < 0: 
         speed[1] = -speed[1]
+    if ballrect.bottom > alto:  # Rebote en la parte inferior
+        speed[1] = -speed[1]
     if ballrect.bottom > ventana.get_height():
         texto = fuente.render("Game Over", True, (125,125,125))
         texto_rect = texto.get_rect()
@@ -53,7 +75,12 @@ while jugando:
         ventana.blit(ball, ballrect)
         ventana.blit(barra, barrarect)
 
+         # Dibujar los bloques
+        for bloque in bloques:
+            bloque.dibujar(ventana)
+
     pygame.display.flip()
     pygame.time.Clock().tick(60)
+
 
 pygame.quit()
