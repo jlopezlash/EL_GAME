@@ -11,6 +11,8 @@ pygame.init()
 ventana = pygame.display.set_mode((ancho,alto))
 pygame.display.set_caption("ARKANOID")
 
+fondo = pygame.image.load('FONDO.png')
+
 ball = pygame.image.load("Bakugan.png")
 ballrect = ball.get_rect()
 speed = [randint(3,6),randint(3,6)]
@@ -34,10 +36,18 @@ def crear_fila_de_bloques():
     espaciado = 5  # Espacio entre bloques
     cantidad_bloques = 10  # Número de bloques en la fila
     for i in range(cantidad_bloques):
-        x=i * (ancho // cantidad_bloques) - (espaciado)  # El 60 es el ancho de cada bloque
-        y = 50  # Fila de bloques en la parte superior
-        bloque = CartaVerde(x, y)
-        bloques.append(bloque)
+        for j in range(3):
+            x = i * (ancho // cantidad_bloques) - (espaciado)  + 30
+            y = j * (alto // 3 -300) + 30 # Fila de bloques en la parte superior
+            bloque = CartaVerde(x, y)
+            bloques.append(bloque)
+
+    for i in range(cantidad_bloques):
+        for j in range(3):
+            x = i * (ancho // cantidad_bloques) - (espaciado)  + 30
+            y = j * (alto// 3 - 420) + 1000 # Fila de bloques en la parte superior
+            bloque = CartaVerde(x, y)
+            bloques.append(bloque)
     return bloques
 
 bloques = crear_fila_de_bloques()
@@ -49,13 +59,13 @@ while jugando:
             jugando = False
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
-        barrarect = barrarect.move(-6,0)
+        barrarect = barrarect.move(-9,0)
     if keys[pygame.K_RIGHT]:
-        barrarect = barrarect.move(6,0)
+        barrarect = barrarect.move(9,0)
     if keys[pygame.K_UP]:
-        barrarect = barrarect.move(0,-3)
+        barrarect = barrarect.move(0,-6)
     if keys[pygame.K_DOWN]:
-        barrarect = barrarect.move(0,3)
+        barrarect = barrarect.move(0,6)
 
     if barrarect.colliderect(ballrect):
         speed[1] = -speed[1]
@@ -77,7 +87,7 @@ while jugando:
         texto_y = ventana.get_height() / 2 - texto_rect.height / 2
         ventana.blit(texto, [texto_x, texto_y])
     else:
-        ventana.fill((0, 0, 0))
+        ventana.blit(fondo, (0,0))
         ventana.blit(ball, ballrect)
         ventana.blit(barra, barrarect)
 
@@ -86,7 +96,7 @@ while jugando:
             bloque.dibujar(ventana)
 
     pygame.display.flip()
-    pygame.time.Clock().tick(60)
+    pygame.time.Clock().tick(120)
 
 
 pygame.quit()
