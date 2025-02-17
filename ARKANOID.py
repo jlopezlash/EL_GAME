@@ -50,9 +50,9 @@ while jugando:
             jugando = False
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
-        barrarect = barrarect.move(-3,0)
+        barrarect = barrarect.move(-6,0)
     if keys[pygame.K_RIGHT]:
-        barrarect = barrarect.move(3,0)
+        barrarect = barrarect.move(6,0)
 
     if barrarect.colliderect(ballrect):
         speed[1] = -speed[1]
