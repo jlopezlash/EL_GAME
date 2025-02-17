@@ -7,7 +7,6 @@ user32 = ctypes.windll.user32
 user32.SetProcessDPIAware()
 ancho, alto = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 #print(ancho, alto) Hasta aqui lo de la pantalla
-
 pygame.init()
 ventana = pygame.display.set_mode((ancho,alto))
 pygame.display.set_caption("ARKANOID")
@@ -32,10 +31,10 @@ class CartaVerde():
 
 def crear_fila_de_bloques():
     bloques = []
-    espaciado = 10  # Espacio entre bloques
-    cantidad_bloques = 6  # Número de bloques en la fila
+    espaciado = 5  # Espacio entre bloques
+    cantidad_bloques = 10  # Número de bloques en la fila
     for i in range(cantidad_bloques):
-        x = i * (120 + espaciado)  # El 60 es el ancho de cada bloque
+        x=i * (ancho // cantidad_bloques) - (espaciado)  # El 60 es el ancho de cada bloque
         y = 50  # Fila de bloques en la parte superior
         bloque = CartaVerde(x, y)
         bloques.append(bloque)
@@ -53,6 +52,10 @@ while jugando:
         barrarect = barrarect.move(-6,0)
     if keys[pygame.K_RIGHT]:
         barrarect = barrarect.move(6,0)
+    if keys[pygame.K_UP]:
+        barrarect = barrarect.move(0,-3)
+    if keys[pygame.K_DOWN]:
+        barrarect = barrarect.move(0,3)
 
     if barrarect.colliderect(ballrect):
         speed[1] = -speed[1]
@@ -60,10 +63,13 @@ while jugando:
     ballrect = ballrect.move(speed)
     if ballrect.left < 0 or ballrect.right > ventana.get_width():
         speed[0] = -speed[0]
+        
     if ballrect.top < 0: 
         speed[1] = -speed[1]
+        
     if ballrect.bottom > alto:  # Rebote en la parte inferior
         speed[1] = -speed[1]
+        
     if ballrect.bottom > ventana.get_height():
         texto = fuente.render("Game Over", True, (125,125,125))
         texto_rect = texto.get_rect()
@@ -71,7 +77,7 @@ while jugando:
         texto_y = ventana.get_height() / 2 - texto_rect.height / 2
         ventana.blit(texto, [texto_x, texto_y])
     else:
-        ventana.fill((252, 243, 207))
+        ventana.fill((0, 0, 0))
         ventana.blit(ball, ballrect)
         ventana.blit(barra, barrarect)
 
