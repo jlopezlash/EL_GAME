@@ -17,7 +17,7 @@ ballrect = ball.get_rect()
 speed = [randint(3,6),randint(3,6)]
 ballrect.move_ip(0,0)
 
-barra = pygame.image.load("Bakugan.png")
+barra = pygame.image.load("BATE.png")
 barrarect = barra.get_rect()
 barrarect.move_ip(240,540)
 
