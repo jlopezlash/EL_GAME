@@ -13,7 +13,7 @@ fondo = pygame.image.load('FONDO.png')
 
 ball = pygame.image.load("Bakugan.png")
 ballrect = ball.get_rect()
-speed = [randint(3, 6), randint(3, 6)]
+speed = [randint(8, 12), randint(8, 12)]
 ballrect.move_ip(200, 500)
 
 barra = pygame.image.load("BATE.png")
@@ -60,9 +60,6 @@ class CartaVerde():
         elif self.tipo == 'azul':
             return 'sumar_vida'  # Bloque azul suma vida
 
-        # Después de recibir el golpe, el bloque se elimina (para rojo y azul también)
-        return 'eliminar'  # Todos los bloques rojo y azul también se eliminan
-
 def crear_fila_de_bloques():
     bloques = []
     espaciado = 5  # Espacio entre bloques
@@ -71,17 +68,34 @@ def crear_fila_de_bloques():
         for j in range(3):
             x = i * (ancho // cantidad_bloques) - (espaciado) + 30
             y = j * (alto // 3 - 300) + 30  # Fila de bloques en la parte superior
-            # Asignar un tipo aleatorio de bloque
-            tipo = randint(0, 8)  # Aleatoriamente elegimos entre 4 tipos
+
+            tipo = randint(0, 7)  # Aleatoriamente elegimos entre 4 tipos
             if tipo == 0 or tipo ==1 :
                 bloques.append(CartaVerde(x, y, tipo='amarillo'))  # Bloque amarillo
            
-            elif tipo == 2:
-                bloques.append(CartaVerde(x, y, tipo='rojo'))  # Bloque rojo
-            elif tipo == 3:
-                bloques.append(CartaVerde(x, y, tipo='azul'))  # Bloque azul
-            else :
+            elif tipo == 2 or tipo ==  3 or tipo == 4 or tipo ==  5:
                 bloques.append(CartaVerde(x, y, tipo='verde'))  # Bloque verde
+            elif tipo == 6:
+                bloques.append(CartaVerde(x, y, tipo='azul'))  # Bloque azul
+            elif tipo == 7:
+                bloques.append(CartaVerde(x, y, tipo='rojo'))  # Bloque rojo
+
+    for k in range(cantidad_bloques):
+        for l in range(3):
+            x = k * (ancho // cantidad_bloques) - (espaciado)  + 30
+            y = l * (alto// 3 - 420) + 1000 # Fila de bloques en la parte superior
+            # Asignar un tipo aleatorio de bloque
+
+            tipo = randint(0, 9)  # Aleatoriamente elegimos entre 4 tipos
+            if tipo == 0 or tipo ==1 :
+                bloques.append(CartaVerde(x, y, tipo='amarillo'))  # Bloque amarillo
+           
+            elif tipo == 2 or tipo ==  3 or tipo == 4 or tipo ==  5:
+                bloques.append(CartaVerde(x, y, tipo='verde'))  # Bloque verde
+            elif tipo == 6:
+                bloques.append(CartaVerde(x, y, tipo='azul'))  # Bloque azul
+            elif tipo == 7 or tipo ==8 or tipo==9:
+                bloques.append(CartaVerde(x, y, tipo='rojo'))  # Bloque rojo
 
     return bloques
 
@@ -114,7 +128,7 @@ while jugando:
     if ballrect.bottom > alto:  # Rebote en la parte inferior
         speed[1] = -speed[1]
         
-    if ballrect.bottom > ventana.get_height():
+    if vidas== 0:
         texto = fuente.render("Game Over", True, (125, 125, 125))
         texto_rect = texto.get_rect()
         texto_x = ventana.get_width() / 2 - texto_rect.width / 2
@@ -133,6 +147,8 @@ while jugando:
                     bloques.remove(bloque)
                 elif resultado == 'quitar_vida':  # Si es un bloque rojo, quitar vida
                     vidas -= 1
+                    speed[0] += 4
+                    speed[1] += 4
                     bloques.remove(bloque)
                 elif resultado == 'sumar_vida':  # Si es un bloque azul, sumar vida
                     vidas += 1
@@ -147,6 +163,6 @@ while jugando:
     ventana.blit(texto_vidas, (5, 5))  # Mostrar las vidas por pantalla
 
     pygame.display.flip()
-    pygame.time.Clock().tick(120)
+    pygame.time.Clock().tick(60)
 
 pygame.quit()
