@@ -16,7 +16,7 @@ fondo = pygame.image.load('FONDO.png')
 ball = pygame.image.load("Bakugan.png")
 ballrect = ball.get_rect()
 speed = [randint(3,6),randint(3,6)]
-ballrect.move_ip(0,0)
+ballrect.move_ip(200,500)
 
 barra = pygame.image.load("BATE.png")
 barrarect = barra.get_rect()
@@ -27,11 +27,23 @@ vidas = 3
 fuente = pygame.font.Font(None, 36)
 
 class CartaVerde():
-    def __init__(self, x, y):
+    def __init__(self, x, y, vida = 2):   
         self.rect = pygame.Rect(x, y, 120, 40)  # Rectángulo del bloque
-        self.color = (0, 255, 0)  # Color verde
+        self.color = (255, 255, 0) if vida == 2 else (0, 255, 0)  # Amarillo para bloques más resistentes
+        self.vida = vida #numero de vida del bloque
+
     def dibujar(self, ventana):
         pygame.draw.rect(ventana, self.color, self.rect)
+
+    def colisiona(self, ballrect):
+        """ Verifica si la pelota colisiona con el bloque """
+        return self.rect.colliderect(ballrect)
+    
+    def recibir_golpe(self):
+        """Reduce la vida del bloque y cambia de color si es necesario"""
+        self.vida -= 1
+        if self.vida == 1:
+            self.color = (0, 255, 0)  # Cambia a verde si queda un golpe
 
 def crear_fila_de_bloques():
     bloques = []
@@ -41,15 +53,15 @@ def crear_fila_de_bloques():
         for j in range(3):
             x = i * (ancho // cantidad_bloques) - (espaciado)  + 30
             y = j * (alto // 3 -300) + 30 # Fila de bloques en la parte superior
-            bloque = CartaVerde(x, y)   
-            bloques.append(bloque)
+            vida = 2 if randint(0, 1) else 1  # Algunos bloques requieren 2 toques
+            bloques.append(CartaVerde(x, y, vida))
 
     for i in range(cantidad_bloques):
         for j in range(3):
             x = i * (ancho // cantidad_bloques) - (espaciado)  + 30
             y = j * (alto// 3 - 420) + 1000 # Fila de bloques en la parte superior
-            bloque = CartaVerde(x, y)
-            bloques.append(bloque)
+            vida = 2 if randint(0, 1) else 1  # Algunos bloques requieren 2 toques
+            bloques.append(CartaVerde(x, y, vida))
     return bloques
 
 bloques = crear_fila_de_bloques()
@@ -60,14 +72,10 @@ while jugando:
         if event.type == pygame.QUIT:
             jugando = False
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT]:
-        barrarect = barrarect.move(-9,0)
-    if keys[pygame.K_RIGHT]:
-        barrarect = barrarect.move(9,0)
-    if keys[pygame.K_UP]:
-        barrarect = barrarect.move(0,-6)
-    if keys[pygame.K_DOWN]:
-        barrarect = barrarect.move(0,6)
+    if keys[pygame.K_LEFT] and barrarect.left > 0:  #mueve la barra y no la deja salirse
+        barrarect = barrarect.move(-9, 0)
+    if keys[pygame.K_RIGHT] and barrarect.right < ancho:
+        barrarect = barrarect.move(9, 0)
 
     if barrarect.colliderect(ballrect):
         speed[1] = -speed[1]
@@ -92,6 +100,14 @@ while jugando:
         ventana.blit(fondo, (0,0))
         ventana.blit(ball, ballrect)
         ventana.blit(barra, barrarect)
+
+        # Detectar colisión con los bloques
+        for bloque in bloques[:]:
+            if bloque.colisiona(ballrect):  # Si la pelota colisiona con el bloque
+                bloque.recibir_golpe()  # Reducir la vida del bloque y cambiar de color
+                if bloque.vida <= 0:
+                    bloques.remove(bloque)  # Elimina el bloque de la lista si ya no tiene vidas
+                speed[1] = -speed[1]  # Rebote de la pelota
 
          # Dibujar los bloques
         for bloque in bloques:

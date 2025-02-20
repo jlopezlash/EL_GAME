@@ -13,7 +13,7 @@ fondo = pygame.image.load('FONDO.png')
 
 ball = pygame.image.load("Bakugan.png")
 ballrect = ball.get_rect()
-speed = [randint(10, 10), randint(10, 10)]
+speed = [randint(3, 6), randint(3, 6)]
 ballrect.move_ip(200, 500)
 
 barra = pygame.image.load("BATE.png")
@@ -24,21 +24,22 @@ vidas = 3
 
 fuente = pygame.font.Font(None, 36)
 
-# Clase para bloques estándar, bloques que quitan o suman vidas
+# Clase para los bloques
 class CartaVerde():
-    def __init__(self, x, y, tipo='normal', vida=2):   
+    def __init__(self, x, y, tipo='normal', vida=1):   
         self.rect = pygame.Rect(x, y, 120, 40)  # Rectángulo del bloque
-        self.tipo = tipo  # Tipo de bloque ('normal', 'quitar', 'sumar')
+        self.tipo = tipo  # Tipo de bloque
         self.vida = vida  # Número de vidas del bloque
+        
         # Asignar colores según el tipo de bloque
-        if self.tipo == 'normal':
-            self.color = (0, 255, 0)  # Verde para los bloques normales
-        elif self.tipo == 'reforzado':
-            self.color = (255,255,0)
-        elif self.tipo == 'quitar':
-            self.color = (255, 0, 0)  # Rojo para los bloques que quitan vida
-        elif self.tipo == 'sumar':
-            self.color = (0, 0, 255)  # Azul para los bloques que suman vida
+        if self.tipo == 'amarillo':
+            self.color = (255, 255, 0)  # Amarillo
+        elif self.tipo == 'verde':
+            self.color = (0, 255, 0)  # Verde
+        elif self.tipo == 'rojo':
+            self.color = (255, 0, 0)  # Rojo
+        elif self.tipo == 'azul':
+            self.color = (0, 0, 255)  # Azul
 
     def dibujar(self, ventana):
         pygame.draw.rect(ventana, self.color, self.rect)
@@ -48,15 +49,19 @@ class CartaVerde():
         return self.rect.colliderect(ballrect)
     
     def recibir_golpe(self):
-        """ Reduce la vida del bloque y cambia de color si es necesario """
-        if self.tipo == 'reforzado':  # Bloques normales (amarillos)
-            self.vida -= 1
-            if self.vida == 1:
-                return 'normal'  # Elimina el bloque
-        elif self.tipo == 'quitar':
-            return 'quitar_vida'  # Bloque que quita vida
-        elif self.tipo == 'sumar':
-            return 'sumar_vida'  # Bloque que suma vida
+        """ Lógica para lo que sucede al ser golpeado """
+        if self.tipo == 'amarillo':
+            self.tipo = 'verde'  # Cambia a verde cuando es golpeado
+            self.color = (0, 255, 0)  # Cambia color a verde
+        elif self.tipo == 'verde':
+            return 'eliminar'  # El bloque verde se elimina
+        elif self.tipo == 'rojo':
+            return 'quitar_vida'  # Bloque rojo quita vida
+        elif self.tipo == 'azul':
+            return 'sumar_vida'  # Bloque azul suma vida
+
+        # Después de recibir el golpe, el bloque se elimina (para rojo y azul también)
+        return 'eliminar'  # Todos los bloques rojo y azul también se eliminan
 
 def crear_fila_de_bloques():
     bloques = []
@@ -66,22 +71,17 @@ def crear_fila_de_bloques():
         for j in range(3):
             x = i * (ancho // cantidad_bloques) - (espaciado) + 30
             y = j * (alto // 3 - 300) + 30  # Fila de bloques en la parte superior
-            tipo = 'reforzado'  # Por defecto, el bloque es normal (amarillo)
-            # Aleatoriamente asignar un bloque que sume, reste vidas o sea normal
-            probabilidad = randint(0, 5)
-            if probabilidad == 0:
-                tipo = 'quitar'  # Bloque que quita una vida
-                vida = 1
-            elif probabilidad == 1:
-                tipo = 'sumar'  # Bloque que suma una vida
-                vida = 1
-            elif probabilidad == 2:
-                tipo = 'reforzado'  # Bloque que suma una vida
-                vida = 2
-            else:
-                tipo = 'normal'  # Bloque normal (verde) con dos vidas
-                vida = 1  # Los bloques amarillos tienen 2 vidas
-            bloques.append(CartaVerde(x, y, tipo, vida))
+            # Asignar un tipo aleatorio de bloque
+            tipo = randint(0, 8)  # Aleatoriamente elegimos entre 4 tipos
+            if tipo == 0 or tipo ==1 :
+                bloques.append(CartaVerde(x, y, tipo='amarillo'))  # Bloque amarillo
+           
+            elif tipo == 2:
+                bloques.append(CartaVerde(x, y, tipo='rojo'))  # Bloque rojo
+            elif tipo == 3:
+                bloques.append(CartaVerde(x, y, tipo='azul'))  # Bloque azul
+            else :
+                bloques.append(CartaVerde(x, y, tipo='verde'))  # Bloque verde
 
     return bloques
 
@@ -128,13 +128,13 @@ while jugando:
         # Detectar colisión con los bloques
         for bloque in bloques[:]:
             if bloque.colisiona(ballrect):  # Si la pelota colisiona con el bloque
-                resultado = bloque.recibir_golpe()  # Reducir la vida del bloque y cambiar de color
-                if resultado == 'eliminar':  # Eliminar el bloque si ya no tiene vida
+                resultado = bloque.recibir_golpe()  # Procesar el golpe
+                if resultado == 'eliminar':  # Eliminar el bloque (amarillo, verde, rojo y azul)
                     bloques.remove(bloque)
-                elif resultado == 'quitar_vida':  # Si el bloque quita una vida
+                elif resultado == 'quitar_vida':  # Si es un bloque rojo, quitar vida
                     vidas -= 1
                     bloques.remove(bloque)
-                elif resultado == 'sumar_vida':  # Si el bloque suma una vida
+                elif resultado == 'sumar_vida':  # Si es un bloque azul, sumar vida
                     vidas += 1
                     bloques.remove(bloque)
                 speed[1] = -speed[1]  # Rebote de la pelota
