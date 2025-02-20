@@ -22,6 +22,8 @@ barra = pygame.image.load("BATE.png")
 barrarect = barra.get_rect()
 barrarect.move_ip(240,540)
 
+vidas = 3
+
 fuente = pygame.font.Font(None, 36)
 
 class CartaVerde():
@@ -39,7 +41,7 @@ def crear_fila_de_bloques():
         for j in range(3):
             x = i * (ancho // cantidad_bloques) - (espaciado)  + 30
             y = j * (alto // 3 -300) + 30 # Fila de bloques en la parte superior
-            bloque = CartaVerde(x, y)
+            bloque = CartaVerde(x, y)   
             bloques.append(bloque)
 
     for i in range(cantidad_bloques):
@@ -94,6 +96,9 @@ while jugando:
          # Dibujar los bloques
         for bloque in bloques:
             bloque.dibujar(ventana)
+
+    texto_vidas = fuente.render(f'Vidas: {vidas}', True, (255,255,255))
+    ventana.blit(texto_vidas, (5,5))    #Muesta de las vidas por pantalla
 
     pygame.display.flip()
     pygame.time.Clock().tick(120)
