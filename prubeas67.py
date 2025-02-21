@@ -20,8 +20,8 @@ barra = pygame.image.load("BATE.png")
 barrarect = barra.get_rect()
 barrarect.move_ip(240, 540)
 
-bloque_amarillo = pygame.image.load("bloque_amarillo.png")
-bloque_verde = pygame.image.load("carta1.webop")
+bloque_amarillo = pygame.image.load("cartaamarilla.jpg")
+bloque_verde = pygame.image.load("carta1.jpg")
 bloque_rojo = pygame.image.load("cartadragonoid.jpg")
 bloque_azul = pygame.image.load("carta4.jpg")
 
@@ -29,13 +29,13 @@ vidas = 3
 
 fuente = pygame.font.Font(None, 36)
 
+
 # Clase para los bloques
 class CartaVerde():
     def __init__(self, x, y, tipo='normal', vida=1):   
         self.rect = pygame.Rect(x, y, 120, 40)  # Rectángulo del bloque
         self.tipo = tipo  # Tipo de bloque
         self.vida = vida  # Número de vidas del bloque
-        
         # Asignar colores según el tipo de bloque
         if self.tipo == 'amarillo':
             self.imagen = bloque_amarillo   #Amarillo
@@ -45,6 +45,8 @@ class CartaVerde():
             self.imagen = bloque_rojo   #Rojo
         elif self.tipo == 'azul':
             self.imagen = bloque_azul  # Azul
+
+        self.imagen = pygame.transform.scale(self.imagen, (120, 40))  # Ajustar el tamaño
     def dibujar(self, ventana):
         ventana.blit(self.imagen, self.rect)  # Usar la imagen del bloque en lugar de un rectángulo
 
@@ -56,7 +58,8 @@ class CartaVerde():
         """ Lógica para lo que sucede al ser golpeado """
         if self.tipo == 'amarillo':
             self.tipo = 'verde'  # Cambia a verde cuando es golpeado
-            self.color = (0, 255, 0)  # Cambia color a verde
+            self.imagen = bloque_verde # Cambia color a verde
+            self.imagen = pygame.transform.scale(self.imagen, (120, 40))  # Ajustar el tamaño
         elif self.tipo == 'verde':
             return 'eliminar'  # El bloque verde se elimina
         elif self.tipo == 'rojo':
