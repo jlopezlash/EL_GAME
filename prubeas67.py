@@ -20,6 +20,11 @@ barra = pygame.image.load("BATE.png")
 barrarect = barra.get_rect()
 barrarect.move_ip(240, 540)
 
+bloque_amarillo = pygame.image.load("bloque_amarillo.png")
+bloque_verde = pygame.image.load("carta1.webop")
+bloque_rojo = pygame.image.load("cartadragonoid.jpg")
+bloque_azul = pygame.image.load("carta4.jpg")
+
 vidas = 3
 
 fuente = pygame.font.Font(None, 36)
@@ -33,15 +38,15 @@ class CartaVerde():
         
         # Asignar colores según el tipo de bloque
         if self.tipo == 'amarillo':
-            self.color = (255, 255, 0)  # Amarillo
+            self.imagen = bloque_amarillo   #Amarillo
         elif self.tipo == 'verde':
-            self.color = (0, 255, 0)  # Verde
+            self.imagen = bloque_verde  #Verde
         elif self.tipo == 'rojo':
-            self.color = (255, 0, 0)  # Rojo
+            self.imagen = bloque_rojo   #Rojo
         elif self.tipo == 'azul':
-            self.color = (0, 0, 255)  # Azul
+            self.imagen = bloque_azul  # Azul
     def dibujar(self, ventana):
-        pygame.draw.rect(ventana, self.color, self.rect)
+        ventana.blit(self.imagen, self.rect)  # Usar la imagen del bloque en lugar de un rectángulo
 
     def colisiona(self, ballrect):
         """ Verifica si la pelota colisiona con el bloque """
