@@ -24,8 +24,6 @@ vidas = 3
 
 fuente = pygame.font.Font(None, 36)
 
-contador = 0
-
 # Clase para los bloques
 class CartaVerde():
     def __init__(self, x, y, tipo='normal', vida=1):   
@@ -78,10 +76,8 @@ def crear_fila_de_bloques():
                 bloques.append(CartaVerde(x, y, tipo='verde'))  # Bloque verde
             elif tipo == 6:
                 bloques.append(CartaVerde(x, y, tipo='azul'))  # Bloque azul
-                contador +=1
             elif tipo == 7:
                 bloques.append(CartaVerde(x, y, tipo='rojo'))  # Bloque rojo
-                contador +=1
 
     for k in range(cantidad_bloques):
         for l in range(3):
@@ -96,10 +92,8 @@ def crear_fila_de_bloques():
                 bloques.append(CartaVerde(x, y, tipo='verde'))  # Bloque verde
             elif tipo == 6:
                 bloques.append(CartaVerde(x, y, tipo='azul'))  # Bloque azul
-                contador +=1
             elif tipo == 7 or tipo ==8 or tipo==9:
                 bloques.append(CartaVerde(x, y, tipo='rojo'))  # Bloque rojo
-                contador +=1
     return bloques
 
 bloques = crear_fila_de_bloques()
@@ -138,12 +132,6 @@ while jugando:
         texto_y = ventana.get_height() / 2 - texto_rect.height / 2
         ventana.blit(texto, [texto_x, texto_y])
 
-    if len(bloques)==contador:
-        texto = fuente.render("You Win...IÑAKIIIII", True, (125, 125, 125))
-        texto_rect = texto.get_rect()
-        texto_x = ventana.get_width() / 2 - texto_rect.width / 2
-        texto_y = ventana.get_height() / 2 - texto_rect.height / 2
-        ventana.blit(texto, [texto_x, texto_y])
     else:
         ventana.blit(fondo, (0, 0))
         ventana.blit(ball, ballrect)
