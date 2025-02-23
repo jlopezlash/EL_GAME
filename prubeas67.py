@@ -143,7 +143,7 @@ while jugando:
         texto_y = ventana.get_height() / 2 - texto_rect.height / 2
         ventana.blit(texto, [texto_x, texto_y])
 
-    else:
+    else:   #Genera en la ventana los elementos
         ventana.blit(fondo, (0, 0))
         ventana.blit(ball, ballrect)
         ventana.blit(barra, barrarect)

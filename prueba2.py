@@ -25,7 +25,7 @@ bloque_verde = pygame.image.load("carta1.jpg")
 bloque_rojo = pygame.image.load("cartadragonoid.jpg")
 bloque_azul = pygame.image.load("carta4.jpg")
 
-vidas = 3
+vidas = 1
 
 fuente = pygame.font.Font(None, 36)
 
@@ -65,6 +65,17 @@ class CartaVerde():
             return 'quitar_vida'  # Bloque rojo quita vida
         elif self.tipo == 'azul':
             return 'sumar_vida'  # Bloque azul suma vida
+class CartaIrrompible(CartaVerde):
+    def __init__(self, x, y, tipo='irrompible'):   
+        self.rect = pygame.Rect(x, y, 120, 40)  # Rectángulo del bloque
+        self.tipo = tipo  # Tipo de bloque
+    
+    def dibujar(self, ventana):
+        pygame.draw.rect(ventana, (0, 0, 0), self.rect)  # Dibuja un rectángulo blanco para los bloques irrompibles
+
+    def recibir_golpe(self):
+        """ Lógica para lo que sucede al ser golpeado, no cambia nada ya que es irrompible """
+        return None  # No hace nada al recibir un golpe
 
 def crear_fila_de_bloques():
     bloques = []
@@ -75,7 +86,7 @@ def crear_fila_de_bloques():
             x = i * (ancho // cantidad_bloques) - (espaciado) + 30
             y = j * (alto // 3 - 300) + 30  # Fila de bloques en la parte superior
 
-            tipo = randint(0, 7)  # Aleatoriamente elegimos entre 4 tipos
+            tipo = randint(0, 8)  # Aleatoriamente elegimos entre 4 tipos
             if tipo == 0 or tipo ==1 :
                 bloques.append(CartaVerde(x, y, tipo='amarillo'))  # Bloque amarillo
             elif tipo == 2 or tipo ==  3 or tipo == 4 or tipo ==  5:
@@ -84,12 +95,14 @@ def crear_fila_de_bloques():
                 bloques.append(CartaVerde(x, y, tipo='azul'))  # Bloque azul
             elif tipo == 7:
                 bloques.append(CartaVerde(x, y, tipo='rojo'))  # Bloque rojo
+            elif tipo == 8:
+                bloques.append(CartaIrrompible(x, y, tipo='irrompible'))
 
     for k in range(cantidad_bloques):
         for l in range(3):
             x = k * (ancho // cantidad_bloques) - (espaciado)  + 30
             y = l * (alto// 3 - 420) + 1000 # Fila de bloques en la parte superior
-            tipo = randint(0, 7)  # Aleatoriamente elegimos entre 4 tipos
+            tipo = randint(0, 8)  # Aleatoriamente elegimos entre 4 tipos
             if tipo == 0 or tipo ==1 :
                 bloques.append(CartaVerde(x, y, tipo='amarillo'))  # Bloque amarillo
             elif tipo == 2 or tipo ==  3 or tipo == 4 or tipo ==  5:
@@ -98,6 +111,8 @@ def crear_fila_de_bloques():
                 bloques.append(CartaVerde(x, y, tipo='azul'))  # Bloque azul
             elif tipo == 7:
                 bloques.append(CartaVerde(x, y, tipo='rojo'))  # Bloque rojo
+            elif tipo == 8:
+                bloques.append(CartaIrrompible(x, y, tipo='irrompible'))
     return bloques
 
 # Función para mostrar la pantalla de "Game Over" y opciones
