@@ -25,7 +25,7 @@ bloque_verde = pygame.image.load("carta1.jpg")
 bloque_rojo = pygame.image.load("cartadragonoid.jpg")
 bloque_azul = pygame.image.load("carta4.jpg")
 
-vidas = 1
+vidas = 3
 
 fuente = pygame.font.Font(None, 36)
 
@@ -135,6 +135,8 @@ def reiniciar_juego():
     ballrect = ball.get_rect()
     speed = [randint(20, 25), randint(20, 25)]
     ballrect.move_ip(200, 500)
+    barra = pygame.image.load("BATE.png")
+    barrarect = barra.get_rect()
     barrarect.move_ip(240, 540)  # Aseguramos que la barra se reposicione
     bloques = crear_fila_de_bloques()
     vidas = 3

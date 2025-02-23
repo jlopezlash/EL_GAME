@@ -25,7 +25,10 @@ bloque_verde = pygame.image.load("carta1.jpg")
 bloque_rojo = pygame.image.load("cartadragonoid.jpg")
 bloque_azul = pygame.image.load("carta4.jpg")
 
-vidas = 3
+vidas = 1
+
+ganar = 0
+
 fuente = pygame.font.Font(None, 36)
 
 
@@ -37,15 +40,16 @@ class CartaVerde():
         self.vida = vida  # Número de vidas del bloque
         # Asignar colores según el tipo de bloque
         if self.tipo == 'amarillo':
-            self.imagen = bloque_amarillo   #Amarillo
+            self.imagen = bloque_amarillo   # Amarillo
         elif self.tipo == 'verde':
-            self.imagen = bloque_verde  #Verde
+            self.imagen = bloque_verde  # Verde
         elif self.tipo == 'rojo':
-            self.imagen = bloque_rojo   #Rojo
+            self.imagen = bloque_rojo   # Rojo
         elif self.tipo == 'azul':
             self.imagen = bloque_azul  # Azul
-
+            
         self.imagen = pygame.transform.scale(self.imagen, (120, 40))  # Ajustar el tamaño
+
     def dibujar(self, ventana):
         ventana.blit(self.imagen, self.rect)  # Usar la imagen del bloque en lugar de un rectángulo
 
@@ -57,7 +61,7 @@ class CartaVerde():
         """ Lógica para lo que sucede al ser golpeado """
         if self.tipo == 'amarillo':
             self.tipo = 'verde'  # Cambia a verde cuando es golpeado
-            self.imagen = bloque_verde # Cambia color a verde
+            self.imagen = bloque_verde  # Cambia color a verde
             self.imagen = pygame.transform.scale(self.imagen, (120, 40))  # Ajustar el tamaño
         elif self.tipo == 'verde':
             return 'eliminar'  # El bloque verde se elimina
@@ -66,9 +70,20 @@ class CartaVerde():
         elif self.tipo == 'azul':
             return 'sumar_vida'  # Bloque azul suma vida
 
-def crear_fila_de_bloques():
+class CartaIrrompible(CartaVerde):
+    def __init__(self, x, y, tipo='irrompible'):   
+        self.rect = pygame.Rect(x, y, 120, 40)  # Rectángulo del bloque
+        self.tipo = tipo  # Tipo de bloque
+    
+    def dibujar(self, ventana):
+        pygame.draw.rect(ventana, (0, 0, 0), self.rect)  # Dibuja un rectángulo blanco para los bloques irrompibles
+
+    def recibir_golpe(self):
+        """ Lógica para lo que sucede al ser golpeado, no cambia nada ya que es irrompible """
+        return None  # No hace nada al recibir un golpe
+
+def crear_fila_de_bloques(contganar):
     bloques = []
-    conganar=0
     espaciado = 5  # Espacio entre bloques
     cantidad_bloques = 10  # Número de bloques en la fila
     for i in range(cantidad_bloques):
@@ -76,18 +91,20 @@ def crear_fila_de_bloques():
             x = i * (ancho // cantidad_bloques) - (espaciado) + 30
             y = j * (alto // 3 - 300) + 30  # Fila de bloques en la parte superior
 
-            tipo = randint(0, 7)  # Aleatoriamente elegimos entre 4 tipos
+            tipo = randint(0, 8)  # Aleatoriamente elegimos entre 4 tipos
             if tipo == 0 or tipo ==1 :
                 bloques.append(CartaVerde(x, y, tipo='amarillo'))  # Bloque amarillo
-           
             elif tipo == 2 or tipo ==  3 or tipo == 4 or tipo ==  5:
                 bloques.append(CartaVerde(x, y, tipo='verde'))  # Bloque verde
             elif tipo == 6:
                 bloques.append(CartaVerde(x, y, tipo='azul'))  # Bloque azul
-                conganar +=1
+                contganar +=1
             elif tipo == 7:
                 bloques.append(CartaVerde(x, y, tipo='rojo'))  # Bloque rojo
-                conganar +=1
+                contganar +=1
+            elif tipo == 8:
+                bloques.append(CartaIrrompible(x, y, tipo='irrompible'))
+                contganar +=1
 
     for k in range(cantidad_bloques):
         for l in range(3):
@@ -100,15 +117,59 @@ def crear_fila_de_bloques():
                 bloques.append(CartaVerde(x, y, tipo='amarillo'))  # Bloque amarillo
             elif tipo == 2 or tipo ==  3 or tipo == 4 or tipo ==  5:
                 bloques.append(CartaVerde(x, y, tipo='verde'))  # Bloque verde
-            elif tipo == 6 or tipo ==8:
+            elif tipo == 6:
                 bloques.append(CartaVerde(x, y, tipo='azul'))  # Bloque azul
-                conganar +=1
+                contganar +=1
             elif tipo == 7:
                 bloques.append(CartaVerde(x, y, tipo='rojo'))  # Bloque rojo
-                conganar +=1
-    return bloques
+                contganar +=1
+            elif tipo == 8:
+                bloques.append(CartaIrrompible(x, y, tipo='irrompible'))
+                contganar +=1
+    return bloques, contganar
 
-bloques= crear_fila_de_bloques()
+#Pantalla final del juego
+def pantalla_game_over(ventana):
+    texto_game_over = fuente.render("Game Over", True, (255, 0, 0))
+    texto_rect = texto_game_over.get_rect()
+    texto_x = ventana.get_width() / 2 - texto_rect.width / 2
+    texto_y = ventana.get_height() / 2 - texto_rect.height / 2 - 50
+    ventana.blit(texto_game_over, [texto_x, texto_y])
+
+    texto_reiniciar = fuente.render("Presiona 'R' para reiniciar", True, (255, 255, 255))
+    ventana.blit(texto_reiniciar, [texto_x, texto_y + 40])
+
+    texto_salir = fuente.render("Presiona 'Esc' para salir", True, (255, 255, 255))
+    ventana.blit(texto_salir, [texto_x, texto_y + 80])
+
+def para_ganar(ventana):
+    texto_game_over = fuente.render("VICTORY", True, (255, 0, 0))
+    texto_rect = texto_game_over.get_rect()
+    texto_x = ventana.get_width() / 2 - texto_rect.width / 2
+    texto_y = ventana.get_height() / 2 - texto_rect.height / 2 - 50
+    ventana.blit(texto_game_over, [texto_x, texto_y])
+
+    texto_reiniciar = fuente.render("Presiona 'R' para reiniciar", True, (255, 255, 255))
+    ventana.blit(texto_reiniciar, [texto_x, texto_y + 40])
+
+    texto_salir = fuente.render("Presiona 'Esc' para salir", True, (255, 255, 255))
+    ventana.blit(texto_salir, [texto_x, texto_y + 80])
+
+
+# Reiniciar juego
+def reiniciar_juego():
+    global ballrect, barrarect, speed, vidas, bloques
+    ballrect = ball.get_rect()
+    speed = [randint(20, 25), randint(20, 25)]
+    ballrect.move_ip(200, 500)
+    barra = pygame.image.load("BATE.png")
+    barrarect = barra.get_rect()
+    barrarect.move_ip(240, 540)  # Aseguramos que la barra se reposicione
+    bloques, ganar = crear_fila_de_bloques(ganar)
+    ganar = 0
+    vidas = 3
+    
+bloques, ganar = crear_fila_de_bloques(ganar)
 
 jugando = True
 while jugando:
@@ -118,6 +179,25 @@ while jugando:
 
     keys = pygame.key.get_pressed()
     
+    if vidas == 0:
+        pantalla_game_over(ventana)
+        pygame.display.flip()
+        if keys[pygame.K_r]:  # Reiniciar el juego si se presiona 'R'
+            reiniciar_juego()
+        if keys[pygame.K_ESCAPE]:  # Salir si se presiona 'Esc'
+            jugando = False
+        continue  # No actualizamos el resto del juego si el juego terminó
+    
+    if len(bloques) == ganar:
+        para_ganar(ventana)
+        pygame.display.flip()
+        if keys[pygame.K_r]:  # Reiniciar el juego si se presiona 'R'
+            reiniciar_juego()
+        if keys[pygame.K_ESCAPE]:  # Salir si se presiona 'Esc'
+            jugando = False
+        continue  # No actualizamos el resto del juego si el juego terminó
+
+
     # Movimiento de la barra con restricciones para no salirse de la pantalla
     if keys[pygame.K_LEFT] and barrarect.left > 0:  # Mueve la barra y no la deja salirse
         barrarect = barrarect.move(-30, 0)
@@ -139,20 +219,6 @@ while jugando:
         
     if ballrect.bottom > alto:  # Rebote en la parte inferior
         speed[1] = -speed[1]
-        
-    if vidas== 0:
-        texto = fuente.render("Game Over", True, (125, 125, 125))
-        texto_rect = texto.get_rect()
-        texto_x = ventana.get_width() / 2 - texto_rect.width / 2
-        texto_y = ventana.get_height() / 2 - texto_rect.height / 2
-        ventana.blit(texto, [texto_x, texto_y])
-
-    if conganar == 0:
-        texto = fuente.render("Iñakiiiiii", True, (125, 125, 125))
-        texto_rect = texto.get_rect()
-        texto_x = ventana.get_width() / 2 - texto_rect.width / 2
-        texto_y = ventana.get_height() / 2 - texto_rect.height / 2
-        ventana.blit(texto, [texto_x, texto_y])
 
     else:
         ventana.blit(fondo, (0, 0))
@@ -167,14 +233,14 @@ while jugando:
                     bloques.remove(bloque)
                 elif resultado == 'quitar_vida':  # Si es un bloque rojo, quitar vida
                     vidas -= 1
+                    ganar-=1
                     speed[0] += 4
                     speed[1] += 4
                     bloques.remove(bloque)
-                    conganar -=1
                 elif resultado == 'sumar_vida':  # Si es un bloque azul, sumar vida
                     vidas += 1
+                    ganar-=1
                     bloques.remove(bloque)
-                    conganar -=1
                 speed[1] = -speed[1]  # Rebote de la pelota
 
         # Dibujar los bloques
@@ -188,3 +254,4 @@ while jugando:
     pygame.time.Clock().tick(60)
 
 pygame.quit()
+
