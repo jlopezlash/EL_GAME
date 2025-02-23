@@ -13,7 +13,7 @@ fondo = pygame.image.load('FONDO.png')
 
 ball = pygame.image.load("Bakugan.png")
 ballrect = ball.get_rect()
-speed = [randint(8, 12), randint(8, 12)]
+speed = [randint(20, 25), randint(20, 25)]
 ballrect.move_ip(200, 500)
 
 barra = pygame.image.load("BATE.png")
@@ -93,14 +93,14 @@ def crear_fila_de_bloques():
             y = l * (alto// 3 - 420) + 1000 # Fila de bloques en la parte superior
             # Asignar un tipo aleatorio de bloque
 
-            tipo = randint(0, 9)  # Aleatoriamente elegimos entre 4 tipos
+            tipo = randint(0, 7)  # Aleatoriamente elegimos entre 4 tipos
             if tipo == 0 or tipo ==1 :
                 bloques.append(CartaVerde(x, y, tipo='amarillo'))  # Bloque amarillo
             elif tipo == 2 or tipo ==  3 or tipo == 4 or tipo ==  5:
                 bloques.append(CartaVerde(x, y, tipo='verde'))  # Bloque verde
             elif tipo == 6:
                 bloques.append(CartaVerde(x, y, tipo='azul'))  # Bloque azul
-            elif tipo == 7 or tipo ==8 or tipo==9:
+            elif tipo == 7:
                 bloques.append(CartaVerde(x, y, tipo='rojo'))  # Bloque rojo
     return bloques
 
@@ -116,11 +116,14 @@ while jugando:
     
     # Movimiento de la barra con restricciones para no salirse de la pantalla
     if keys[pygame.K_LEFT] and barrarect.left > 0:  # Mueve la barra y no la deja salirse
-        barrarect = barrarect.move(-9, 0)
+        barrarect = barrarect.move(-30, 0)
     if keys[pygame.K_RIGHT] and barrarect.right < ancho:
-        barrarect = barrarect.move(9, 0)
+        barrarect = barrarect.move(30, 0)
 
     if barrarect.colliderect(ballrect):
+        # Ajustar la posición de la pelota para que no quede "dentro" de la barra
+        if ballrect.bottom > barrarect.top and ballrect.top < barrarect.top:
+            ballrect.bottom = barrarect.top
         speed[1] = -speed[1]
 
     ballrect = ballrect.move(speed)

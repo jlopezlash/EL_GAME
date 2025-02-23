@@ -13,12 +13,17 @@ fondo = pygame.image.load('FONDO.png')
 
 ball = pygame.image.load("Bakugan.png")
 ballrect = ball.get_rect()
-speed = [randint(3, 6), randint(3, 6)]
+speed = [randint(20, 25), randint(20, 25)]
 ballrect.move_ip(200, 500)
 
 barra = pygame.image.load("BATE.png")
 barrarect = barra.get_rect()
-barrarect.move_ip(240, 540)
+barrarect.move_ip(240, 540)  # Posición inicial de la barra
+
+bloque_amarillo = pygame.image.load("cartaamarilla.jpg")
+bloque_verde = pygame.image.load("carta1.jpg")
+bloque_rojo = pygame.image.load("cartadragonoid.jpg")
+bloque_azul = pygame.image.load("carta4.jpg")
 
 vidas = 3
 
@@ -30,19 +35,19 @@ class CartaVerde():
         self.rect = pygame.Rect(x, y, 120, 40)  # Rectángulo del bloque
         self.tipo = tipo  # Tipo de bloque
         self.vida = vida  # Número de vidas del bloque
-        
         # Asignar colores según el tipo de bloque
         if self.tipo == 'amarillo':
-            self.color = (255, 255, 0)  # Amarillo
+            self.imagen = bloque_amarillo   #Amarillo
         elif self.tipo == 'verde':
-            self.color = (0, 255, 0)  # Verde
+            self.imagen = bloque_verde  #Verde
         elif self.tipo == 'rojo':
-            self.color = (255, 0, 0)  # Rojo
+            self.imagen = bloque_rojo   #Rojo
         elif self.tipo == 'azul':
-            self.color = (0, 0, 255)  # Azul
+            self.imagen = bloque_azul  # Azul
 
+        self.imagen = pygame.transform.scale(self.imagen, (120, 40))  # Ajustar el tamaño
     def dibujar(self, ventana):
-        pygame.draw.rect(ventana, self.color, self.rect)
+        ventana.blit(self.imagen, self.rect)  # Usar la imagen del bloque en lugar de un rectángulo
 
     def colisiona(self, ballrect):
         """ Verifica si la pelota colisiona con el bloque """
@@ -52,7 +57,8 @@ class CartaVerde():
         """ Lógica para lo que sucede al ser golpeado """
         if self.tipo == 'amarillo':
             self.tipo = 'verde'  # Cambia a verde cuando es golpeado
-            self.color = (0, 255, 0)  # Cambia color a verde
+            self.imagen = bloque_verde # Cambia color a verde
+            self.imagen = pygame.transform.scale(self.imagen, (120, 40))  # Ajustar el tamaño
         elif self.tipo == 'verde':
             return 'eliminar'  # El bloque verde se elimina
         elif self.tipo == 'rojo':
@@ -60,41 +66,65 @@ class CartaVerde():
         elif self.tipo == 'azul':
             return 'sumar_vida'  # Bloque azul suma vida
 
-        # Después de recibir el golpe, el bloque se elimina (para rojo y azul también)
-        return 'eliminar'  # Todos los bloques rojo y azul también se eliminan
-
 def crear_fila_de_bloques():
     bloques = []
     espaciado = 5  # Espacio entre bloques
     cantidad_bloques = 10  # Número de bloques en la fila
     for i in range(cantidad_bloques):
         for j in range(3):
-            x = i * (ancho // cantidad_bloques) - (espaciado)  + 30
-            y = j * (alto // 3 -300) + 30 # Fila de bloques en la parte superior
-            vida = 2 if randint(0, 1) else 1  # Algunos bloques requieren 2 toques
-            bloques.append(CartaVerde(x, y, vida))
+            x = i * (ancho // cantidad_bloques) - (espaciado) + 30
+            y = j * (alto // 3 - 300) + 30  # Fila de bloques en la parte superior
 
-    for i in range(cantidad_bloques):
-        for j in range(3):
-            x = i * (ancho // cantidad_bloques) - (espaciado)  + 30
-            y = j * (alto// 3 - 420) + 1000 # Fila de bloques en la parte superior
-            vida = 2 if randint(0, 1) else 1  # Algunos bloques requieren 2 toques
-            bloques.append(CartaVerde(x, y, vida))
-            
-            # Asignar un tipo aleatorio de bloque con diferentes probabilidades
-            tipo = randint(0, 7)  # Valor aleatorio entre 0 y 7
-            
-            if tipo < 4:
-                bloques.append(CartaVerde(x, y, tipo='amarillo'))  # Bloque amarillo (50%)
-            elif tipo < 6:
-                bloques.append(CartaVerde(x, y, tipo='verde'))  # Bloque verde (25%)
+            tipo = randint(0, 7)  # Aleatoriamente elegimos entre 4 tipos
+            if tipo == 0 or tipo ==1 :
+                bloques.append(CartaVerde(x, y, tipo='amarillo'))  # Bloque amarillo
+            elif tipo == 2 or tipo ==  3 or tipo == 4 or tipo ==  5:
+                bloques.append(CartaVerde(x, y, tipo='verde'))  # Bloque verde
             elif tipo == 6:
-                bloques.append(CartaVerde(x, y, tipo='rojo'))  # Bloque rojo (12.5%)
-            else:
-                bloques.append(CartaVerde(x, y, tipo='azul'))  # Bloque azul (12.5%)
+                bloques.append(CartaVerde(x, y, tipo='azul'))  # Bloque azul
+            elif tipo == 7:
+                bloques.append(CartaVerde(x, y, tipo='rojo'))  # Bloque rojo
 
+    for k in range(cantidad_bloques):
+        for l in range(3):
+            x = k * (ancho // cantidad_bloques) - (espaciado)  + 30
+            y = l * (alto// 3 - 420) + 1000 # Fila de bloques en la parte superior
+            tipo = randint(0, 7)  # Aleatoriamente elegimos entre 4 tipos
+            if tipo == 0 or tipo ==1 :
+                bloques.append(CartaVerde(x, y, tipo='amarillo'))  # Bloque amarillo
+            elif tipo == 2 or tipo ==  3 or tipo == 4 or tipo ==  5:
+                bloques.append(CartaVerde(x, y, tipo='verde'))  # Bloque verde
+            elif tipo == 6:
+                bloques.append(CartaVerde(x, y, tipo='azul'))  # Bloque azul
+            elif tipo == 7:
+                bloques.append(CartaVerde(x, y, tipo='rojo'))  # Bloque rojo
     return bloques
 
+# Función para mostrar la pantalla de "Game Over" y opciones
+def pantalla_game_over(ventana):
+    texto_game_over = fuente.render("Game Over", True, (255, 0, 0))
+    texto_rect = texto_game_over.get_rect()
+    texto_x = ventana.get_width() / 2 - texto_rect.width / 2
+    texto_y = ventana.get_height() / 2 - texto_rect.height / 2 - 50
+    ventana.blit(texto_game_over, [texto_x, texto_y])
+
+    texto_reiniciar = fuente.render("Presiona 'R' para reiniciar", True, (255, 255, 255))
+    ventana.blit(texto_reiniciar, [texto_x, texto_y + 40])
+
+    texto_salir = fuente.render("Presiona 'Esc' para salir", True, (255, 255, 255))
+    ventana.blit(texto_salir, [texto_x, texto_y + 80])
+
+# Reiniciar juego
+def reiniciar_juego():
+    global ballrect, barrarect, speed, vidas, bloques
+    ballrect = ball.get_rect()
+    speed = [randint(20, 25), randint(20, 25)]
+    ballrect.move_ip(200, 500)
+    barrarect.move_ip(240, 540)  # Aseguramos que la barra se reposicione
+    bloques = crear_fila_de_bloques()
+    vidas = 3
+
+# Crear bloques iniciales
 bloques = crear_fila_de_bloques()
 
 jugando = True
@@ -104,14 +134,25 @@ while jugando:
             jugando = False
 
     keys = pygame.key.get_pressed()
-    
-    # Movimiento de la barra con restricciones para no salirse de la pantalla
-    if keys[pygame.K_LEFT] and barrarect.left > 0:  # Mueve la barra y no la deja salirse
-        barrarect = barrarect.move(-9, 0)
+
+    if vidas == 0:
+        pantalla_game_over(ventana)
+        pygame.display.flip()
+        if keys[pygame.K_r]:  # Reiniciar el juego si se presiona 'R'
+            reiniciar_juego()
+        if keys[pygame.K_ESCAPE]:  # Salir si se presiona 'Esc'
+            jugando = False
+        continue  # No actualizamos el resto del juego si el juego terminó
+
+    # Movimiento de la barra
+    if keys[pygame.K_LEFT] and barrarect.left > 0:
+        barrarect = barrarect.move(-30, 0)
     if keys[pygame.K_RIGHT] and barrarect.right < ancho:
-        barrarect = barrarect.move(9, 0)
+        barrarect = barrarect.move(30, 0)
 
     if barrarect.colliderect(ballrect):
+        if ballrect.bottom > barrarect.top and ballrect.top < barrarect.top:
+            ballrect.bottom = barrarect.top
         speed[1] = -speed[1]
 
     ballrect = ballrect.move(speed)
@@ -121,40 +162,39 @@ while jugando:
     if ballrect.top < 0: 
         speed[1] = -speed[1]
         
-    if ballrect.bottom > alto:  # Rebote en la parte inferior
-        speed[1] = -speed[1]
-        
-    if ballrect.bottom > ventana.get_height():
-        texto = fuente.render("Game Over", True, (125, 125, 125))
-        texto_rect = texto.get_rect()
-        texto_x = ventana.get_width() / 2 - texto_rect.width / 2
-        texto_y = ventana.get_height() / 2 - texto_rect.height / 2
-        ventana.blit(texto, [texto_x, texto_y])
-    else:
-        ventana.blit(fondo, (0, 0))
-        ventana.blit(ball, ballrect)
-        ventana.blit(barra, barrarect)
+    if ballrect.bottom > alto:
+        vidas -= 1
+        ballrect.move_ip(200, 500)  # Reiniciar posición de la pelota
+        speed = [randint(20, 25), randint(20, 25)]  # Reiniciar velocidad
 
-        # Detectar colisión con los bloques
-        for bloque in bloques[:]:
-            if bloque.colisiona(ballrect):  # Si la pelota colisiona con el bloque
-                resultado = bloque.recibir_golpe()  # Procesar el golpe
-                if resultado == 'eliminar':  # Eliminar el bloque (amarillo, verde, rojo y azul)
-                    bloques.remove(bloque)
-                elif resultado == 'quitar_vida':  # Si es un bloque rojo, quitar vida
-                    vidas -= 1
-                elif resultado == 'sumar_vida':  # Si es un bloque azul, sumar vida
-                    vidas += 1
-                speed[1] = -speed[1]  # Rebote de la pelota
+    ventana.blit(fondo, (0, 0))
+    ventana.blit(ball, ballrect)
+    ventana.blit(barra, barrarect)  # Dibuja la barra cada vez
 
-        # Dibujar los bloques
-        for bloque in bloques:
-            bloque.dibujar(ventana)
+    # Detectar colisión con los bloques
+    for bloque in bloques[:]:
+        if bloque.colisiona(ballrect):
+            resultado = bloque.recibir_golpe()
+            if resultado == 'eliminar':
+                bloques.remove(bloque)
+            elif resultado == 'quitar_vida':
+                vidas -= 1
+                speed[0] += 4
+                speed[1] += 4
+                bloques.remove(bloque)
+            elif resultado == 'sumar_vida':
+                vidas += 1
+                bloques.remove(bloque)
+            speed[1] = -speed[1]
+
+    # Dibujar los bloques
+    for bloque in bloques:
+        bloque.dibujar(ventana)
 
     texto_vidas = fuente.render(f'Vidas: {vidas}', True, (255, 255, 255))
-    ventana.blit(texto_vidas, (5, 5))  # Mostrar las vidas por pantalla
+    ventana.blit(texto_vidas, (5, 5))
 
     pygame.display.flip()
-    pygame.time.Clock().tick(120)
+    pygame.time.Clock().tick(60)
 
 pygame.quit()
